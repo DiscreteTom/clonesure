@@ -39,11 +39,11 @@ macro_rules! cc {
   }};
 
   // callback for copy closure
-  (@impl param[$($param:ident)*] $var:ident $($t:tt)*) => {
+  (@impl param[$($param:ident)*] $($t:tt)*) => {
     |$($param),*| $($t)*
   };
   // callback for move closure
-  (@impl_move param[$($param:ident)*] $var:ident $($t:tt)*) => {
+  (@impl_move param[$($param:ident)*] $($t:tt)*) => {
     move |$($param),*| $($t)*
   };
 }
