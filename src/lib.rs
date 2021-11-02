@@ -2,6 +2,10 @@
 ///
 /// # Getting Started
 ///
+/// Use `@var` to clone a variable. Use `@mut var` to clone a mutable variable.
+///
+/// E.g.:
+///
 /// ```ignore
 /// cc!(|@a, @mut b, c| { a + b + c })
 /// ```
