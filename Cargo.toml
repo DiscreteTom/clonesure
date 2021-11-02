@@ -2,3 +2,6 @@
 name = "clonesure"
 version = "0.1.0"
 edition = "2018"
+license = "MIT"
+authors = ["DiscreteTom <discrete_tom@outlook.com>"]
+description = "A helper macro to create closures which will clone its environment."
