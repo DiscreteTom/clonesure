@@ -1,5 +1,9 @@
 # Clonesure
 
+![Crates.io](https://img.shields.io/crates/l/clonesure?style=flat-square)
+![Crates.io](https://img.shields.io/crates/v/clonesure?style=flat-square)
+![docs.rs](https://img.shields.io/docsrs/clonesure?style=flat-square)
+
 A helper macro to create closures which will clone its environment.
 
 ## Getting Started
