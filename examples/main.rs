@@ -1,6 +1,20 @@
 use clonesure::cc;
 
 fn main() {
+  // `cc` will implicitly move its environment
+  let s1 = String::from("111");
+  let s2 = String::from("222");
+  assert_eq!(
+    // implicitly move s1 into the closure
+    cc!(|| format!("{}", s1))(),
+    "111"
+  );
+  assert_eq!(
+    // explicitly move s2 into the closure
+    cc!(move || format!("{}", s2))(),
+    "222"
+  );
+
   // clone one var
   let s1 = String::from("111");
   assert_eq!(

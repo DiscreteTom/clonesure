@@ -7,7 +7,7 @@
 /// E.g.:
 ///
 /// ```ignore
-/// cc!(|@a, @mut b, c, &d, &mut e| { a + b + c + d + e })
+/// cc!(|@a, @mut b, c, &d, mut e, &mut f| { a + b + c + d + e + f })
 /// ```
 ///
 /// will be translated to:
@@ -16,7 +16,7 @@
 /// {
 ///   let a = a.clone();
 ///   let mut b = b.clone();
-///   move |c, &d, &mut e| { a + b + c + d + e }
+///   move |c, &d, mut e, &mut f| { a + b + c + d + e + f }
 /// }
 /// ```
 ///
@@ -26,6 +26,20 @@
 /// use clonesure::cc;
 ///
 /// fn main() {
+///   // `cc` will implicitly move its environment
+///   let s1 = String::from("111");
+///   let s2 = String::from("222");
+///   assert_eq!(
+///     // implicitly move s1 into the closure
+///     cc!(|| format!("{}", s1))(),
+///     "111"
+///   );
+///   assert_eq!(
+///     // explicitly move s2 into the closure
+///     cc!(move || format!("{}", s2))(),
+///     "222"
+///   );
+///
 ///   // clone one var
 ///   let s1 = String::from("111");
 ///   assert_eq!(
@@ -91,7 +105,15 @@
 /// ```
 #[macro_export]
 macro_rules! cc {
-  // public interface, eat the first `|`
+  // simple closures without params
+  // cc will implicitly move its environment
+  (|| $($t:tt)*) => {
+    move || $($t)*
+  };
+  (move || $($t:tt)*) => {
+    move || $($t)*
+  };
+
   (|$($t:tt)*) => {
     cc!(@@impl mut[] clone[] param[] $($t)*)
   };
