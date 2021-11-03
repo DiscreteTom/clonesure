@@ -85,31 +85,31 @@
 macro_rules! cc {
   // public interface, eat the first `|`
   (|$($t:tt)*) => {
-    cc!(@impl mut[] clone[] param[] $($t)*)
+    cc!(@@impl mut[] clone[] param[] $($t)*)
   };
   // public interface, eat the leading `move |`
   (move |$($t:tt)*) => {
-    cc!(@impl mut[] clone[] param[] $($t)*)
+    cc!(@@impl mut[] clone[] param[] $($t)*)
   };
 
   // eat `@mut xx`
-  (@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] @mut $var:ident $($t:tt)*)=>{
-    cc!(@impl mut[$($mut)* $var] clone[$($clone)*] param[$($param)*] $($t)*)
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] @mut $var:ident $($t:tt)*)=>{
+    cc!(@@impl mut[$($mut)* $var] clone[$($clone)*] param[$($param)*] $($t)*)
   };
   // eat `,`
-  (@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] , $($t:tt)*)=>{
-    cc!(@impl mut[$($mut)*] clone[$($clone)*] param[$($param)*] $($t)*)
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] , $($t:tt)*)=>{
+    cc!(@@impl mut[$($mut)*] clone[$($clone)*] param[$($param)*] $($t)*)
   };
   // eat `@xx`
-  (@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] @$var:ident $($t:tt)*)=>{
-    cc!(@impl mut[$($mut)*] clone[$($clone)* $var] param[$($param)*] $($t)*)
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] @$var:ident $($t:tt)*)=>{
+    cc!(@@impl mut[$($mut)*] clone[$($clone)* $var] param[$($param)*] $($t)*)
   };
   // eat `xx`
-  (@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] $var:ident $($t:tt)*)=>{
-    cc!(@impl mut[$($mut)*] clone[$($clone)*] param[$($param)* $var] $($t)*)
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] $var:ident $($t:tt)*)=>{
+    cc!(@@impl mut[$($mut)*] clone[$($clone)*] param[$($param)* $var] $($t)*)
   };
   // eat the second `|`, generate result
-  (@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] | $($t:tt)*)=>{{
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$($param:ident)*] | $($t:tt)*)=>{{
     $(
       let mut $mut = $mut.clone();
     )*
