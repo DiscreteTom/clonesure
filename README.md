@@ -87,3 +87,5 @@ fn main() {
   // cc!(|&s1, &mut s2| {})
 }
 ```
+
+## [CHANGELOG](https://github.com/DiscreteTom/clonesure/blob/main/CHANGELOG.md)
