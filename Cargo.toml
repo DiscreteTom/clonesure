@@ -5,3 +5,5 @@ edition = "2018"
 license = "MIT"
 authors = ["DiscreteTom <discrete_tom@outlook.com>"]
 description = "A helper macro to create closures which will clone its environment."
+repository = "https://github.com/DiscreteTom/clonesure"
+keywords = ["closure", "clone", "macro"]
