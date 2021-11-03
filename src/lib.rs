@@ -114,44 +114,29 @@ macro_rules! cc {
     move || $($t)*
   };
 
+  // public interface, eat the first `|`
   (|$($t:tt)*) => {
-    cc!(@@impl mut[] clone[] param[] $($t)*)
+    cc!(@@impl mut[] clone[] $($t)*)
   };
   // public interface, eat the leading `move |`
   (move |$($t:tt)*) => {
-    cc!(@@impl mut[] clone[] param[] $($t)*)
+    cc!(@@impl mut[] clone[] $($t)*)
   };
 
   // eat `@mut xx`, store in the array `mut`
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] @mut $var:ident $($t:tt)*)=>{
-    cc!(@@impl mut[$($mut)* $var] clone[$($clone)*] param[$([$param_ref $param_mut $param])*] $($t)*)
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] @mut $var:ident $($t:tt)*)=>{
+    cc!(@@impl mut[$($mut)* $var] clone[$($clone)*] $($t)*)
   };
   // eat `@xx`, store in the array `clone`
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] @$var:ident $($t:tt)*)=>{
-    cc!(@@impl mut[$($mut)*] clone[$($clone)* $var] param[$([$param_ref $param_mut $param])*] $($t)*)
-  };
-  // eat `&mut xx`, wrap it, then store in the array `param`
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] &mut $var:ident $($t:tt)*)=>{
-    cc!(@@impl mut[$($mut)*] clone[$($clone)*] param[$([$param_ref $param_mut $param])* [true true $var]] $($t)*)
-  };
-  // eat `&xx`, wrap it, then store in the array `param`
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] &$var:ident $($t:tt)*)=>{
-    cc!(@@impl mut[$($mut)*] clone[$($clone)*] param[$([$param_ref $param_mut $param])* [true false $var]] $($t)*)
-  };
-  // eat `mut xx`, wrap it, then store in the array `param`
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] mut $var:ident $($t:tt)*)=>{
-    cc!(@@impl mut[$($mut)*] clone[$($clone)*] param[$([$param_ref $param_mut $param])* [false true $var]] $($t)*)
-  };
-  // eat `xx`, wrap it, then store in the array `param`
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] $var:ident $($t:tt)*)=>{
-    cc!(@@impl mut[$($mut)*] clone[$($clone)*] param[$([$param_ref $param_mut $param])* [false false $var]] $($t)*)
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] @$var:ident $($t:tt)*)=>{
+    cc!(@@impl mut[$($mut)*] clone[$($clone)* $var] $($t)*)
   };
   // eat `,`
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] , $($t:tt)*)=>{
-    cc!(@@impl mut[$($mut)*] clone[$($clone)*] param[$([$param_ref $param_mut $param])*] $($t)*)
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] , $($t:tt)*)=>{
+    cc!(@@impl mut[$($mut)*] clone[$($clone)*] $($t)*)
   };
-  // eat the second `|`, generate result
-  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] param[$([$param_ref:ident $param_mut:ident $param:ident])*] | $($t:tt)*)=>{{
+  // otherwise, generate result
+  (@@impl mut[$($mut:ident)*] clone[$($clone:ident)*] $($t:tt)*)=>{{
     $(
       let mut $mut = $mut.clone();
     )*
@@ -160,23 +145,6 @@ macro_rules! cc {
       let $clone = $clone.clone();
     )*
 
-    move |$(cc!(@@unblock $param_ref $param_mut $param)),*| $($t)*
+    move |$($t)*
   }};
-
-  // extract `xx` from block
-  (@@unblock false false $var:ident)=>{
-    $var
-  };
-  // extract `&xx` from block
-  (@@unblock true false $var:ident)=>{
-    &$var
-  };
-  // extract `mut xx` from block
-  (@@unblock false true $var:ident)=>{
-    mut $var
-  };
-  // extract `&mut xx` from block
-  (@@unblock true true $var:ident)=>{
-    &mut $var
-  };
 }
